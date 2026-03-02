@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if ! command -v nvidia-smi &> /dev/null
+then
+    echo '{"text": "N/A", "tooltip": "nvidia-smi not found", "percentage": 0}'
+    exit 0
+fi
+
+# Get GPU utilization and temperature
+# Output format example: 12, 45
+data=$(nvidia-smi --query-gpu=utilization.gpu,temperature.gpu --format=csv,noheader,nounits)
+
+# Parse data
+utilization=$(echo "$data" | awk -F', ' '{print $1}')
+temperature=$(echo "$data" | awk -F', ' '{print $2}')
+
+# Output JSON
+# text: The main text displayed (can be usage %)
+# tooltip: Detailed info
+# percentage: Allows using format-icons in Waybar config
+# class: specific class for styling based on load (optional)
+
+if [ -z "$utilization" ]; then
+    echo '{"text": "Err", "tooltip": "Error querying GPU", "percentage": 0}'
+else
+    # Determine class
+    class="normal"
+    if [ "$utilization" -gt 80 ]; then
+        class="critical"
+    elif [ "$utilization" -gt 50 ]; then
+        class="warning"
+    fi
+
+    printf '{"text": "%s%%", "tooltip": "GPU: %s%%\\nTemp: %s°C", "percentage": %d, "class": "%s"}\n' "$utilization" "$utilization" "$temperature" "$utilization" "$class"
+fi

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Get current volume
+get_volume() {
+    pamixer --get-volume
+}
+
+# Get current mute status
+get_mute() {
+    pamixer --get-mute
+}
+
+# Send notification
+notify_volume() {
+    volume=$(get_volume)
+    mute=$(get_mute)
+
+    if [ "$mute" == "true" ]; then
+        notify-send -h string:x-canonical-private-synchronous:volume \
+            -u low "Volume Muted"
+    else
+        notify-send -h string:x-canonical-private-synchronous:volume \
+            -h int:value:$volume "Volume: ${volume}%"
+    fi
+}
+
+case "$1" in
+    up)
+        pamixer -i 5
+        notify_volume
+        ;;
+    down)
+        pamixer -d 5
+        notify_volume
+        ;;
+    mute)
+        pamixer -t
+        notify_volume
+        ;;
+esac

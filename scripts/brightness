@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Get current brightness
+get_brightness() {
+    brightnessctl -m | cut -d, -f4 | tr -d %
+}
+
+# Send notification
+notify_brightness() {
+    brightness=$(get_brightness)
+    notify-send -h string:x-canonical-private-synchronous:brightness \
+        -h int:value:$brightness "Brightness: ${brightness}%"
+}
+
+case "$1" in
+    up)
+        brightnessctl set +5%
+        notify_brightness
+        ;;
+    down)
+        brightnessctl set 5%-
+        notify_brightness
+        ;;
+esac

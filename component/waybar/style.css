@@ -1,0 +1,442 @@
+/* ============================================
+   Waybar - macOS-inspired Catppuccin Mocha
+   ============================================ */
+
+/* Catppuccin Mocha Color Palette */
+@define-color base #1e1e2e;
+@define-color mantle #181825;
+@define-color crust #11111b;
+@define-color text #cdd6f4;
+@define-color subtext1 #bac2de;
+@define-color subtext0 #a6adc8;
+@define-color overlay2 #9399b2;
+@define-color overlay1 #7f849c;
+@define-color overlay0 #6c7086;
+@define-color surface2 #585b70;
+@define-color surface1 #45475a;
+@define-color surface0 #313244;
+@define-color mauve #cba6f7;
+@define-color pink #f5c2e7;
+@define-color red #f38ba8;
+@define-color peach #fab387;
+@define-color yellow #f9e2af;
+@define-color green #a6e3a1;
+@define-color teal #94e2d5;
+@define-color sky #89dceb;
+@define-color sapphire #74c7ec;
+@define-color blue #89b4fa;
+@define-color lavender #b4befe;
+
+/* Global Styles */
+* {
+    font-family:
+        "SF Pro Display", "Inter", "JetBrainsMono Nerd Font", "Noto Sans",
+        sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* Main Bar */
+window#waybar {
+    background: transparent;
+}
+
+window#waybar > box {
+    margin: 8px 12px 0px 12px;
+}
+
+/* Tooltip Styling */
+tooltip {
+    background: alpha(@crust, 0.95);
+    border: 1px solid alpha(@surface1, 0.5);
+    border-radius: 12px;
+    padding: 8px 12px;
+}
+
+tooltip label {
+    color: @text;
+    font-size: 12px;
+}
+
+/* Base Module Styling */
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#custom-temperature,
+#custom-gpu,
+#backlight,
+#network,
+#pulseaudio,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#custom-expand,
+#custom-cycle_wall,
+#custom-ss,
+#custom-clipboard,
+#custom-dynamic_pill,
+#custom-notification,
+#mpd {
+    padding: 6px 14px;
+    margin: 4px 3px;
+    border-radius: 10px;
+    background: alpha(@crust, 0.85);
+    color: @text;
+    border: 1px solid alpha(@surface0, 0.4);
+    box-shadow: 0px 2px 6px alpha(#000000, 0.15);
+    transition-property: background, border-color, box-shadow;
+    transition-duration: 200ms;
+}
+
+/* Hover effect for all modules */
+#clock:hover,
+#battery:hover,
+#cpu:hover,
+#memory:hover,
+#disk:hover,
+#temperature:hover,
+#custom-temperature:hover,
+#custom-gpu:hover,
+#backlight:hover,
+#network:hover,
+#pulseaudio:hover,
+#custom-media:hover,
+#tray:hover,
+#custom-expand:hover,
+#custom-cycle_wall:hover,
+#custom-ss:hover,
+#custom-clipboard:hover,
+#custom-dynamic_pill:hover,
+#custom-notification:hover {
+    background: alpha(@surface0, 0.9);
+    border-color: alpha(@surface1, 0.6);
+    box-shadow: 0px 4px 12px alpha(#000000, 0.2);
+}
+
+/* ============================================
+   Workspaces - macOS Dock inspired
+   ============================================ */
+#workspaces {
+    background: alpha(@crust, 0.85);
+    border-radius: 12px;
+    margin: 4px 6px 4px 16px;
+    padding: 4px 6px;
+    border: 1px solid alpha(@surface0, 0.4);
+    box-shadow: 0px 2px 8px alpha(#000000, 0.2);
+}
+
+#workspaces button {
+    padding: 4px 10px;
+    margin: 2px 3px;
+    border-radius: 8px;
+    color: @overlay1;
+    background: transparent;
+    font-weight: 600;
+    font-size: 12px;
+    transition-property: background, color, box-shadow;
+    transition-duration: 200ms;
+    border: none;
+    box-shadow: none;
+}
+
+#workspaces button:hover {
+    background: alpha(@surface0, 0.7);
+    color: @text;
+}
+
+#workspaces button.active {
+    background: @mauve;
+    color: @crust;
+    font-weight: 700;
+    box-shadow: 0px 2px 8px alpha(@mauve, 0.35);
+}
+
+#workspaces button.urgent {
+    background: @red;
+    color: @crust;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   Clock - Center spotlight
+   ============================================ */
+#clock {
+    background: alpha(@mantle, 0.9);
+    color: @text;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 18px;
+    margin: 4px 0px;
+    border-radius: 12px;
+    border: 1px solid alpha(@surface0, 0.5);
+    box-shadow: 0px 2px 10px alpha(#000000, 0.2);
+}
+
+#clock label {
+    color: @text;
+    font-weight: 600;
+}
+
+/* ============================================
+   System Monitors
+   ============================================ */
+#cpu {
+    color: @sky;
+}
+
+#cpu label {
+    color: @sky;
+}
+
+#memory {
+    color: @mauve;
+}
+
+#custom-gpu {
+    color: @sapphire;
+}
+
+#custom-gpu.warning {
+    color: @peach;
+}
+
+#custom-gpu.critical {
+    background: @red;
+    color: @crust;
+}
+
+#temperature,
+#custom-temperature {
+    color: @yellow;
+}
+
+#temperature.critical,
+#custom-temperature.critical {
+    background: @red;
+    color: @crust;
+    animation: blink 1s ease-in-out infinite alternate;
+}
+
+#custom-temperature.warning {
+    color: @peach;
+}
+
+/* ============================================
+   Audio & Media
+   ============================================ */
+#pulseaudio {
+    color: @peach;
+}
+
+#pulseaudio.muted {
+    color: @overlay0;
+    opacity: 0.7;
+}
+
+#custom-media {
+    color: @green;
+}
+
+#custom-media.custom-spotify {
+    color: @green;
+}
+
+#custom-media.custom-vlc {
+    color: @peach;
+}
+
+/* ============================================
+   Network
+   ============================================ */
+#network {
+    color: @blue;
+}
+
+#network.wifi,
+#network.linked {
+    color: @green;
+}
+
+#network.ethernet {
+    color: @yellow;
+}
+
+#network.disconnected {
+    background: @red;
+    color: @crust;
+    font-weight: 600;
+}
+
+#network.disabled {
+    color: @overlay0;
+    opacity: 0.6;
+}
+
+/* ============================================
+   Battery
+   ============================================ */
+#battery {
+    color: @green;
+    font-size: 14px;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @teal;
+}
+
+#battery.warning:not(.charging) {
+    color: @peach;
+}
+
+#battery.critical:not(.charging) {
+    background: @red;
+    color: @crust;
+    animation: blink 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0.6;
+    }
+}
+
+/* ============================================
+   Backlight
+   ============================================ */
+#backlight {
+    color: @yellow;
+}
+
+/* ============================================
+   Disk
+   ============================================ */
+#disk {
+    color: @peach;
+}
+
+/* ============================================
+   Tray
+   ============================================ */
+#tray {
+    padding: 6px 10px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+    opacity: 0.6;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background: alpha(@red, 0.2);
+    border-color: alpha(@red, 0.5);
+}
+
+#tray menu {
+    background: alpha(@crust, 0.95);
+    border: 1px solid alpha(@surface1, 0.5);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+#tray menu menuitem {
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+#tray menu menuitem:hover {
+    background: alpha(@surface0, 0.8);
+}
+
+/* ============================================
+   Custom Modules
+   ============================================ */
+#custom-notification {
+    font-size: 16px;
+    padding: 6px 16px;
+}
+
+#custom-clipboard {
+    color: @mauve;
+}
+
+#custom-ss {
+    color: @blue;
+}
+
+#custom-cycle_wall {
+    color: @pink;
+}
+
+/* ============================================
+   Dynamic Pill
+   ============================================ */
+#custom-dynamic_pill {
+    font-weight: 600;
+}
+
+#custom-dynamic_pill label {
+    color: @text;
+}
+
+#custom-dynamic_pill.low {
+    border-color: alpha(@teal, 0.5);
+    color: @teal;
+}
+
+#custom-dynamic_pill.normal {
+    border-color: alpha(@green, 0.5);
+    color: @green;
+}
+
+#custom-dynamic_pill.critical {
+    background: alpha(@red, 0.2);
+    border-color: alpha(@red, 0.6);
+    color: @red;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+#custom-dynamic_pill.playing {
+    border-color: alpha(@mauve, 0.5);
+    color: @mauve;
+}
+
+#custom-dynamic_pill.paused {
+    color: @lavender;
+    opacity: 0.8;
+}
+
+#custom-dynamic_pill.paused label {
+    color: @lavender;
+}
+
+/* ============================================
+   Right-side module container styling
+   ============================================ */
+.modules-right > widget:last-child > #tray {
+    margin-right: 16px;
+}
+
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 8px;
+}

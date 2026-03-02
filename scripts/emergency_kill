@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Emergency Process Killer - Smart Mode
+# Targets resource-hogging processes while preserving system stability
+# Keybind: SUPER+ALT+K
+
+# Essential processes to never kill (minimal whitelist)
+WHITELIST="systemd|Hyprland|emergency_kill"
+
+# Stage 1: Kill top CPU consumers
+echo "Stage 1: Terminating CPU hogs..."
+ps aux --sort=-%cpu | head -n 15 | awk '{print $2, $11}' | grep -Ev "$WHITELIST" | while read pid cmd; do
+    if [[ "$pid" =~ ^[0-9]+$ ]] && [ "$pid" != "$$" ] && [ "$pid" != "1" ]; then
+        kill -15 "$pid" 2>/dev/null
+    fi
+done
+
+# Stage 2: Kill top memory consumers
+echo "Stage 2: Terminating memory hogs..."
+ps aux --sort=-%mem | head -n 15 | awk '{print $2, $11}' | grep -Ev "$WHITELIST" | while read pid cmd; do
+    if [[ "$pid" =~ ^[0-9]+$ ]] && [ "$pid" != "$$" ] && [ "$pid" != "1" ]; then
+        kill -9 "$pid" 2>/dev/null
+    fi
+done
+
+# Stage 3: Force kill known heavy applications
+echo "Stage 3: Force killing known resource hogs..."
+
+# Browsers
+pkill -9 -f "chrome|chromium|firefox|brave|opera|vivaldi|edge|waterfox" 2>/dev/null
+
+# Electron apps
+pkill -9 -f "electron|discord|slack|teams|spotify|vscode|code|atom" 2>/dev/null
+
+# Development tools
+pkill -9 -f "node|npm|yarn|webpack|gulp|grunt" 2>/dev/null
+
+# Heavy applications
+pkill -9 -f "gimp|inkscape|blender|obs|kdenlive|davinci" 2>/dev/null
+
+# IDEs
+pkill -9 -f "jetbrains|intellij|pycharm|webstorm|phpstorm|clion" 2>/dev/null
+
+# Video/Media
+pkill -9 -f "vlc|mpv|ffmpeg|handbrake" 2>/dev/null
+
+# Stage 4: Attempt to drop system caches (requires root, will fail silently if no permissions)
+sync 2>/dev/null
+echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+
+echo "Emergency kill complete - Smart mode"

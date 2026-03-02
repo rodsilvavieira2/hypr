@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Current Theme
+theme="$HOME/.config/rofi/power.rasi"
+
+# Options
+shutdown='<span color="#f38ba8"></span>'
+reboot=''
+# Rofi CMD
+rofi_cmd() {
+	rofi -dmenu \
+		-theme "$theme"
+}
+
+# Execute Command
+run_cmd() {
+	if [[ $1 == '--shutdown' ]]; then
+		systemctl poweroff
+	elif [[ $1 == '--reboot' ]]; then
+		systemctl reboot
+	elif [[ $1 == '--suspend' ]]; then
+		systemctl suspend
+	elif [[ $1 == '--logout' ]]; then
+		hyprctl dispatch exit
+	elif [[ $1 == '--lock' ]]; then
+		if [ -x "$HOME/.config/hypr/scripts/lock" ]; then
+			"$HOME/.config/hypr/scripts/lock"
+		else
+			loginctl lock-session
+		fi
+	fi
+}
+
+# Actions
+chosen="$(echo -e "$reboot\n$shutdown" | rofi_cmd)"
+
+case ${chosen} in
+    $shutdown)
+		run_cmd --shutdown
+        ;;
+    $reboot)
+		run_cmd --reboot
+        ;;
+esac

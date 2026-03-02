@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+
+import json
+import subprocess
+import sys
+
+def get_cpu_temperatures():
+    try:
+        # Run sensors -j to get JSON output
+        output = subprocess.check_output(['sensors', '-j']).decode('utf-8')
+        data = json.loads(output)
+    except Exception as e:
+        return None, f"Error executing sensors: {e}"
+
+    core_temps = []
+
+    # Iterate through sensors to find coretemp (Intel) or k10temp (AMD)
+    # The user's context shows 'coretemp-isa-0000', so we look for that structure
+    for sensor_name, sensor_data in data.items():
+        # Adjust this condition if you want to include other sensors,
+        # but usually 'coretemp' or 'k10temp' contains the CPU cores.
+        if 'coretemp' in sensor_name or 'k10temp' in sensor_name:
+            for key, value in sensor_data.items():
+                # We are looking for keys like "Core 0", "Core 1", etc.
+                if key.startswith('Core'):
+                    # The structure is usually "Core X": {"tempY_input": Z.Z, ...}
+                    for subkey, subvalue in value.items():
+                        if subkey.endswith('_input'):
+                            core_temps.append((key, subvalue))
+
+    if not core_temps:
+        return None, "No CPU Core temperatures found"
+
+    return core_temps, None
+
+def main():
+    temps, error = get_cpu_temperatures()
+
+    if error:
+        # Output a safe error JSON so Waybar doesn't crash
+        print(json.dumps({"text": "Err", "tooltip": error}))
+        sys.exit(1)
+
+    # Calculate average temperature
+    total_temp = sum(t[1] for t in temps)
+    avg_temp = total_temp / len(temps)
+
+    # Sort by Core number for a tidy tooltip
+    # Extracts the number from "Core X" to sort numerically
+    try:
+        temps.sort(key=lambda x: int(x[0].split()[1]) if len(x[0].split()) > 1 and x[0].split()[1].isdigit() else 0)
+    except:
+        # Fallback to alphabetical sort if parsing fails
+        temps.sort()
+
+    # Build the tooltip
+    tooltip_lines = []
+    tooltip_lines.append(f"<b>Average CPU: {avg_temp:.1f}°C</b>")
+    tooltip_lines.append("") # Spacer
+
+    for name, temp in temps:
+        tooltip_lines.append(f"{name}: {temp:.1f}°C")
+
+    tooltip = "\n".join(tooltip_lines)
+
+    # Determine class state for coloring in Waybar (optional)
+    # You can style #custom-temperature.critical in style.css
+    css_class = ""
+    if avg_temp >= 80:
+        css_class = "critical"
+    elif avg_temp >= 60:
+        css_class = "warning"
+
+    # Construct the JSON output for Waybar
+    output = {
+        "text": f"{avg_temp:.0f}°C",
+        "tooltip": tooltip,
+        "class": css_class
+    }
+
+    print(json.dumps(output))
+
+if __name__ == "__main__":
+    main()

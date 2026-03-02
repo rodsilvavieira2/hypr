@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Emergency Process Killer - Nuclear Mode
+# Kills ALL user processes except essential system services
+# Keybind: SUPER+ALT+SHIFT+K
+
+# Whitelist: Only the absolute essentials to keep Hyprland running
+WHITELIST_PATTERN="systemd|Hyprland|dbus-daemon|pipewire|wireplumber|pulseaudio|emergency_kill_nuclear|xdg-desktop-portal"
+
+echo "NUCLEAR MODE: Killing ALL user processes..."
+
+# Get all processes owned by current user
+USER_PROCESSES=$(ps -u "$USER" -o pid=,comm= | grep -Ev "$WHITELIST_PATTERN" | awk '{print $1}')
+
+# Kill all non-whitelisted processes with extreme prejudice
+for pid in $USER_PROCESSES; do
+    # Double check it's not our script, PID 1, or a critical process
+    if [ "$pid" != "$$" ] && [ "$pid" != "1" ] && [ "$pid" -gt 10 ]; then
+        # SIGKILL - no mercy, no grace period
+        kill -9 "$pid" 2>/dev/null
+    fi
+done
+
+# Second pass: Be extra aggressive with any stragglers
+sleep 0.2
+ps -u "$USER" -o pid=,comm= | grep -Ev "$WHITELIST_PATTERN" | awk '{print $1}' | while read pid; do
+    if [ "$pid" != "$$" ] && [ "$pid" != "1" ] && [ "$pid" -gt 10 ]; then
+        kill -9 "$pid" 2>/dev/null
+    fi
+done
+
+# Drop system caches (attempt, may fail without root)
+sync 2>/dev/null
+echo 3 > /proc/sys/vm/drop_caches 2>/dev/null || true
+
+echo "Nuclear kill complete - All user processes terminated"

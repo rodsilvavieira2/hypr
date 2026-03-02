@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+# variables
+config=$HOME/.config/hypr
+scripts=$config/scripts
+
+# wallpaper
+swww-daemon &
+$scripts/wall /home/rodrigo/Documents/Wallpapers/ColorWall-gpgyw3.jpg &
+
+# effects
+$scripts/rgb &
+
+# other
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+gnome-keyring-daemon --start --components=secrets &
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
+
+wl-paste --type text --watch cliphist store &
+wl-paste --type image --watch cliphist store &
+
+qs -c overview &
+qs -c powermenu &
+qs -c dashboard &
+qs -c search &
+qs -c wallpaper &
+qs -c notifications &
+qs -c network &
+qs -c waybar &
+qs -c bluetooth &
+qs -c audio &
+

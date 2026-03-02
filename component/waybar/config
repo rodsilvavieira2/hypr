@@ -1,0 +1,103 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 40,
+    "spacing": 5,
+    "margin-bottom":-11,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-right": ["pulseaudio", "memory", "cpu", "custom/gpu", "custom/temperature", "tray"],
+    "modules-center": ["clock"],
+
+    "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t",
+        "on-click-right": "swaync-client -d",
+        "escape": true
+    },
+    "custom/cycle_wall":{
+        "format":"{}",
+        "exec": "~/.config/hypr/scripts/tools/expand wall",
+        // "interval": 1,
+        "on-click": "~/.config/hypr/scripts/tools/expand cycle"
+    },
+    "custom/clipboard": {
+        "format": "",
+        "on-click": "cliphist list | wofi --dmenu | cliphist decode | wl-copy",
+        "on-click-right": "cliphist wipe",
+        "tooltip": true,
+        "tooltip-format": "Clipboard: Left click to select, Right click to wipe"
+    },
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-active": " {icon} ",
+        "on-click": "activate"
+        // "format-icons":{
+        //     "10":"10"
+        // }
+    },
+    "tray": {
+        "icon-size": 21,
+        "spacing": 10
+    },
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "interval": 60,
+        "format": "{:%I:%M}",
+        "max-length": 25
+    },
+    "cpu": {
+        "interval":1,
+        "format": "<span size='large'></span> {icon0} {icon1} {icon2} {icon3}",
+        "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"], 
+        "on-click": "qs ipc -c controlcenter call controlcenter toggle"
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "custom/temperature": {
+        "exec": "~/.config/hypr/scripts/temperature",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{} ",
+        "tooltip": true
+    },
+    "custom/gpu": {
+        "exec": "~/.config/hypr/scripts/gpu",
+        "return-type": "json",
+        "format": "<span size='large'>󰢮</span> {icon}",
+        "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+        "interval": 1,
+        "tooltip": true,
+        "on-click": "qs ipc -c controlcenter call controlcenter toggle"
+    },
+    "pulseaudio": {
+        "format": "{format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-icons": {
+            "headphone": "󰋋 ",
+            "hands-free": "󰋋 ",
+            "headset": "󰋎 ",
+            "phone": " ",
+            "portable": " ",
+            "car": " ",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+}

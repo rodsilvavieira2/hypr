@@ -29,4 +29,6 @@ qs -c network &
 qs -c waybar &
 qs -c bluetooth &
 qs -c audio &
+qs -c overview &
+qs -c search_clipboard &
 

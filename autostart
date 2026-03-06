@@ -31,4 +31,4 @@ qs -c bluetooth &
 qs -c audio &
 qs -c overview &
 qs -c search_clipboard &
-
+qs -c github_dashboard &

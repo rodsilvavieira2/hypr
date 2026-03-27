@@ -6,7 +6,11 @@ scripts=$config/scripts
 
 # wallpaper
 swww-daemon &
-$scripts/wall /home/rodrigo/Documents/Wallpapers/ColorWall-gpgyw3.jpg &
+if [ -f ~/.cache/current_wallpaper ]; then
+    $scripts/wall "$(cat ~/.cache/current_wallpaper)" &
+else
+    $scripts/wall /home/rodrigo/Documents/Wallpapers/ColorWall-gpgyw3.jpg &
+fi
 
 # effects
 $scripts/rgb &
@@ -14,7 +18,7 @@ $scripts/rgb &
 # other
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 gnome-keyring-daemon --start --components=secrets &
-dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP GITHUB_TOKEN GITHUB_USERNAME &
 
 wl-paste --type text --watch cliphist store &
 wl-paste --type image --watch cliphist store &

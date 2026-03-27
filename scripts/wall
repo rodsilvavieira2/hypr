@@ -1,2 +1,23 @@
 #!/usr/bin/bash
-swww img $1 --transition-type grow --transition-pos "$(hyprctl cursorpos)" --transition-duration 1
+SWWW=/home/rodrigo/.local/bin/swww
+SWWW_DAEMON=/home/rodrigo/.local/bin/swww-daemon
+HYPRCTL=/usr/bin/hyprctl
+
+# Restore HYPRLAND_INSTANCE_SIGNATURE when called from Quickshell execDetached
+# (which runs with a minimal environment that strips Hyprland session vars)
+if [[ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]]; then
+    export HYPRLAND_INSTANCE_SIGNATURE=$(ls /run/user/1000/hypr/ 2>/dev/null | head -1)
+fi
+
+if ! pgrep -x swww-daemon > /dev/null; then
+    "$SWWW_DAEMON" --no-cache &
+    sleep 0.5
+fi
+
+CURSORPOS=$("$HYPRCTL" cursorpos 2>/dev/null)
+if [[ -z "$CURSORPOS" || "$CURSORPOS" == *"not set"* ]]; then
+    CURSORPOS="960,540"
+fi
+
+"$SWWW" img "$1" --transition-type grow --transition-pos "$CURSORPOS" --transition-duration 1
+echo "$1" > ~/.cache/current_wallpaper

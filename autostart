@@ -36,3 +36,5 @@ qs -c audio &
 qs -c overview &
 qs -c search_clipboard &
 qs -c github_dashboard &
+qs -c music &
+qs -c calendar &

@@ -28,13 +28,9 @@ qs -c powermenu &
 qs -c dashboard &
 qs -c search &
 qs -c wallpaper &
-qs -c notifications &
-qs -c network &
 qs -c waybar &
-qs -c bluetooth &
-qs -c audio &
 qs -c overview &
 qs -c search_clipboard &
-qs -c github_dashboard &
-qs -c music &
 qs -c calendar &
+qs -c controlcenter &
+qs -c settings &
